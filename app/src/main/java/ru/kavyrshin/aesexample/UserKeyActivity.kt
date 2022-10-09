@@ -1,11 +1,10 @@
 package ru.kavyrshin.aesexample
 
-import android.opengl.Visibility
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.lambdapioneer.argon2kt.Argon2Kt
 import com.lambdapioneer.argon2kt.Argon2KtUtils
 import com.lambdapioneer.argon2kt.Argon2Mode
@@ -14,12 +13,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_user_key.*
-import kotlinx.android.synthetic.main.activity_user_key.buttonDecrypt
-import kotlinx.android.synthetic.main.activity_user_key.buttonEncrypt
-import kotlinx.android.synthetic.main.activity_user_key.editTextCiphertext
-import kotlinx.android.synthetic.main.activity_user_key.editTextOpentext
 import java.security.SecureRandom
 import java.util.*
 import javax.crypto.Cipher
