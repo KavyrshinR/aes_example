@@ -83,7 +83,7 @@ class UserKeyActivity : AppCompatActivity() {
         }
     }
 
-    private fun generateIvSpec(blockSize: Int): IvParameterSpec {//TODO: убрать случайный вектор инициализации
+    private fun generateIvSpec(blockSize: Int): IvParameterSpec {
         val random = SecureRandom()
         val ivRandomBytes = ByteArray(blockSize)
         random.nextBytes(ivRandomBytes)
