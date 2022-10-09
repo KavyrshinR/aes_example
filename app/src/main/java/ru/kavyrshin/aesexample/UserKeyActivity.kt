@@ -28,7 +28,7 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 const val ALGORITHM = "AES/CBC/ISO10126Padding"
-const val SALT = "ab12f5ac56"
+const val SALT = "ab12f5ac56666666"
 
 class UserKeyActivity : AppCompatActivity() {
 
