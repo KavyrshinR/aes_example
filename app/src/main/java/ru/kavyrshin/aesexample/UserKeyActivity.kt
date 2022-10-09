@@ -89,7 +89,7 @@ class UserKeyActivity : AppCompatActivity() {
         }
     }
 
-    private fun generateIvSpec(blockSize: Int): IvParameterSpec {
+    private fun generateIvSpec(blockSize: Int): IvParameterSpec {//TODO: убрать случайный вектор инициализации
         val random = SecureRandom()
         val ivRandomBytes = ByteArray(blockSize)
         random.nextBytes(ivRandomBytes)
@@ -142,7 +142,8 @@ class UserKeyActivity : AppCompatActivity() {
                 version = Argon2Version.V13
             )
 
-            Log.d("myLogs", "argon hash: rawHashAsByteArray ${result.rawHashAsByteArray().contentToString()}")
+            val rawHash = result.rawHashAsByteArray()
+            Log.d("myLogs", "rawHash length: ${rawHash.size}; content: ${rawHash.contentToString()}")
 
             SecretKeySpec(result.rawHashAsByteArray(), "AES")
         }
