@@ -14,6 +14,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_user_key.*
+import java.security.GeneralSecurityException
 import java.security.SecureRandom
 import java.util.*
 import javax.crypto.Cipher
@@ -106,6 +107,7 @@ class UserKeyActivity : AppCompatActivity() {
         return cipher.iv + ciphertext
     }
 
+    @Throws(GeneralSecurityException::class)
     private fun decryptMessage(cipherText: ByteArray, secretKey: SecretKey): ByteArray {
 
         val cipher = Cipher.getInstance(ALGORITHM)
