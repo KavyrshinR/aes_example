@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.lambdapioneer.argon2kt.Argon2Kt
 import com.lambdapioneer.argon2kt.Argon2KtUtils
@@ -58,20 +59,25 @@ class UserKeyActivity : AppCompatActivity() {
         }
 
         buttonDecrypt.setOnClickListener {
+            val cipherString = editTextCiphertext.text.toString()
+
             compositeDisposable.add(generateAesKey(editTextKey.text.toString(), SALT)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { progressBar.visibility = View.VISIBLE }
                 .doFinally { progressBar.visibility = View.GONE }
-                .subscribe({ secretKey ->
-                    val cipherString = editTextCiphertext.text.toString()
+                .map { secretKey ->
                     val cipherText = Base64.decode(cipherString.toByteArray(Charsets.UTF_8), Base64.DEFAULT)
-
+                    cipherText to secretKey
+                }
+                .map { (cipherText, secretKey) ->
                     Log.d("myLogs", "cipherText.length ${cipherText.size}")
-                    val openText = decryptMessage(cipherText, secretKey)
-
-                    editTextOpentext.setText(String(openText, Charsets.UTF_8))
+                    decryptMessage(cipherText, secretKey)
+                }
+                .subscribe({ plainText ->
+                    editTextOpentext.setText(String(plainText, Charsets.UTF_8))
                 },{
+                    Toast.makeText(this, it.javaClass.name, Toast.LENGTH_LONG).show()
                     it.printStackTrace()
                 })
             )
