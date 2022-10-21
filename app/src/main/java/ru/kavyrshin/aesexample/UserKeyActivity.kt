@@ -35,13 +35,12 @@ class UserKeyActivity : AppCompatActivity() {
         setContentView(R.layout.activity_user_key)
 
         buttonEncrypt.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
             compositeDisposable.add(generateAesKey(editTextKey.text.toString(), SALT)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { progressBar.visibility = View.VISIBLE }
+                .doFinally { progressBar.visibility = View.GONE }
                 .subscribe({ secretKey ->
-                    progressBar.visibility = View.GONE
-
                     val openText = editTextOpentext.text.toString()
                     val cipherText = encryptMessage(
                         openText.toByteArray(Charsets.UTF_8),
@@ -53,21 +52,18 @@ class UserKeyActivity : AppCompatActivity() {
                     val cipherString = String(Base64.encode(cipherText, Base64.DEFAULT), Charsets.UTF_8)
                     editTextCiphertext.setText(cipherString)
                 },{
-                    progressBar.visibility = View.GONE
                     it.printStackTrace()
                 })
             )
         }
 
         buttonDecrypt.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
-
             compositeDisposable.add(generateAesKey(editTextKey.text.toString(), SALT)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { progressBar.visibility = View.VISIBLE }
+                .doFinally { progressBar.visibility = View.GONE }
                 .subscribe({ secretKey ->
-                    progressBar.visibility = View.GONE
-
                     val cipherString = editTextCiphertext.text.toString()
                     val cipherText = Base64.decode(cipherString.toByteArray(Charsets.UTF_8), Base64.DEFAULT)
 
@@ -76,8 +72,6 @@ class UserKeyActivity : AppCompatActivity() {
 
                     editTextOpentext.setText(String(openText, Charsets.UTF_8))
                 },{
-                    progressBar.visibility = View.GONE
-
                     it.printStackTrace()
                 })
             )
