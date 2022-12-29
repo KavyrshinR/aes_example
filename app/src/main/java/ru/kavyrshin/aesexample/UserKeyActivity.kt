@@ -23,7 +23,7 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-const val ALGORITHM = "AES/CBC/ISO10126Padding"
+const val ALGORITHM = "AES/CBC/NoPadding"
 const val SALT = "ab12f5ac56666666"
 
 class UserKeyActivity : AppCompatActivity() {
@@ -36,15 +36,26 @@ class UserKeyActivity : AppCompatActivity() {
         setContentView(R.layout.activity_user_key)
 
         buttonEncrypt.setOnClickListener {
+            val random = SecureRandom()
+            val openTextBeforePad = editTextOpentext.text.toString().toByteArray(Charsets.UTF_8)
+            Log.d("myLogs", "utf-8 bytes  ${openTextBeforePad.contentToString()}")
+            Log.d("myLogs", "utf-8 length ${openTextBeforePad.size}")
+
+            val paddingNeededSize = 16 - (openTextBeforePad.size % 16)
+            val noPadding = ByteArray(paddingNeededSize).also {
+                random.nextBytes(it)
+            }
+            val openText = openTextBeforePad + noPadding
+            Log.d("myLogs", "openTextSize ${openText.size}; openText ${openText.contentToString()}")
+
             compositeDisposable.add(generateAesKey(editTextKey.text.toString(), SALT)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { progressBar.visibility = View.VISIBLE }
                 .doFinally { progressBar.visibility = View.GONE }
                 .subscribe({ secretKey ->
-                    val openText = editTextOpentext.text.toString()
                     val cipherText = encryptMessage(
-                        openText.toByteArray(Charsets.UTF_8),
+                        openText,
                         secretKey = secretKey
                     )
 
