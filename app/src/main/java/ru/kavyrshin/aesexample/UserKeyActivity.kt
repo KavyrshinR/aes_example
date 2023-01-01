@@ -152,7 +152,7 @@ class UserKeyActivity : AppCompatActivity() {
             val rawHash = result.rawHashAsByteArray()
             Log.d("myLogs", "rawHash length: ${rawHash.size}; content: ${rawHash.contentToString()}")
 
-            SecretKeySpec(result.rawHashAsByteArray(), "AES")
+            SecretKeySpec(rawHash, "AES")
         }
     }
 }
