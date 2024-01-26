@@ -45,7 +45,10 @@ class UserKeyActivity : AppCompatActivity() {
             val openText = openTextBeforePad + noPadding
 //            Log.d("myLogs", "openTextSize ${openText.size}; openText ${openText.contentToString()}")
 
-            compositeDisposable.add(generateAesKey(editTextKey.text.toString(), SALT)
+            val key = editTextKey.text.toString()
+            val salt = editTextSalt.text.toString().takeIf { it.isNotBlank() } ?: SALT
+
+            compositeDisposable.add(generateAesKey(key, salt)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { progressBar.visibility = View.VISIBLE }
@@ -69,7 +72,10 @@ class UserKeyActivity : AppCompatActivity() {
         buttonDecrypt.setOnClickListener {
             val cipherString = editTextCiphertext.text.toString()
 
-            compositeDisposable.add(generateAesKey(editTextKey.text.toString(), SALT)
+            val key = editTextKey.text.toString()
+            val salt = editTextSalt.text.toString().takeIf { it.isNotBlank() } ?: SALT
+
+            compositeDisposable.add(generateAesKey(key, salt)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { progressBar.visibility = View.VISIBLE }
