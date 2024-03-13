@@ -1,16 +1,13 @@
 package ru.kavyrshin.aesexample
 
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
-import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import java.security.KeyStore
 import java.security.SecureRandom
-import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.spec.IvParameterSpec
@@ -39,7 +36,7 @@ class MainActivity : AppCompatActivity() {
             val openText = editTextOpentext.text.toString()
             val cipherText = encryptMessage(openText.toByteArray(Charsets.UTF_8))
 
-            Log.d("myLogs", "iv + cipherText ${Arrays.toString(cipherText)}")
+//            Log.d("myLogs", "iv + cipherText ${Arrays.toString(cipherText)}")
 
             val cipherString = String(Base64.encode(cipherText, Base64.DEFAULT), Charsets.UTF_8)
             editTextCiphertext.setText(cipherString)
@@ -49,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             val cipherString = editTextCiphertext.text.toString()
             val cipherText = Base64.decode(cipherString.toByteArray(Charsets.UTF_8), Base64.DEFAULT)
 
-            Log.d("myLogs", "cipherText.length ${cipherText.size}")
+//            Log.d("myLogs", "cipherText.length ${cipherText.size}")
             val openText = decryptMessage(cipherText)
 
             editTextOpentext.setText(String(openText, Charsets.UTF_8))
@@ -72,11 +69,11 @@ class MainActivity : AppCompatActivity() {
         //Работая внутри keyStore он не дает подавать свой iv
         cipher.init(Cipher.ENCRYPT_MODE, secretKey)
 
-        Log.d("myLogs", "encryptMessage: IV from cipher ${Arrays.toString(cipher.iv)}")
+//        Log.d("myLogs", "encryptMessage: IV from cipher ${Arrays.toString(cipher.iv)}")
 
         val ciphertext: ByteArray = cipher.doFinal(openText)
 
-        Log.d("myLogs", "cipherText.length ${ciphertext.size}")
+//        Log.d("myLogs", "cipherText.length ${ciphertext.size}")
 
         return cipher.iv + ciphertext
     }
@@ -92,8 +89,8 @@ class MainActivity : AppCompatActivity() {
 
         cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
 
-        Log.d("myLogs", "decryptMessage: blockSize ${cipher.blockSize}")
-        Log.d("myLogs", "decryptMessage: IV ${Arrays.toString(cipher.iv)}")
+//        Log.d("myLogs", "decryptMessage: blockSize ${cipher.blockSize}")
+//        Log.d("myLogs", "decryptMessage: IV ${Arrays.toString(cipher.iv)}")
 
         val opentext: ByteArray = cipher.doFinal(cipherText, cipher.blockSize, cipherText.size - cipher.blockSize)
 
@@ -101,23 +98,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun generateAndSaveAesKey() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val aesSpec: KeyGenParameterSpec =
-                KeyGenParameterSpec.Builder(ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
-                    .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                    .setRandomizedEncryptionRequired(true)
-                    .setKeySize(256)
-                    .build()
+        val aesSpec: KeyGenParameterSpec =
+            KeyGenParameterSpec.Builder(ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                .setRandomizedEncryptionRequired(true)
+                .setKeySize(256)
+                .build()
 
-            val keygen = KeyGenerator.getInstance("AES", "AndroidKeyStore")
-            keygen.init(aesSpec)
-            keygen.generateKey()
-        } else {
-            TODO("VERSION.SDK_INT < M")
-            val keygen = KeyGenerator.getInstance("AES")
-            keygen.init(256)
-            val secretKey = keygen.generateKey()
-        }
+        val keygen = KeyGenerator.getInstance("AES", "AndroidKeyStore")
+        keygen.init(aesSpec)
+        keygen.generateKey()
     }
 }
